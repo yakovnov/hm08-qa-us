@@ -4,13 +4,35 @@ module.exports = {
     toField: '#to',
     phoneNumberField: '#phone',
     codeField: '#code',
+    cardNumberField: '#number',
+    cvcCodeField: '.card-code-input input#code[name="code"]',
+    messageToDriverField: '#comment',
+
+    
+
     // Buttons
     callATaxiButton: 'button=Call a taxi',
     phoneNumberButton: '//div[starts-with(text(), "Phone number")]',
     nextButton: 'button=Next',
     confirmButton: 'button=Confirm',
+    supportivePlanButton: 'div=Supportive',
+    paymentMethodButton: '.pp-button',
+    addCardButton: 'div=Add card',
+    linkButton: 'button=Link',
+    closeButton: '.payment-picker .section.active .close-button',
+    paymentMethod: '.pp-selector',
+    blanketRadioButton: 'span.slider.round',
+    icecreamPlusButton: 'div=+',
+    icecreamCounter: '.counter-value',
+    orderButton: '.workflow .smart-button-wrapper',
+    
+
+    
+
     // Modals
     phoneNumberModal: '.modal',
+    carSearchModal: 'div.order-body',
+
     // Functions
     fillAddresses: async function(from, to) {
         const fromField = await $(this.fromField);
