@@ -2,17 +2,31 @@ const page = require('../../page');
 const helper = require('../../helper')
 
 describe('Create an order', () => {
-      it('fill in the adress', async () => {
+     it('fill in the adress', async () => {
         await browser.url(`/`)
         await page.fillAddresses('East 2nd Street, 601', '1300 1st St');
+        
+        // Added the expect line for field values
+        const fromAddress = await $(page.fromField);
+        await fromAddress.getValue();
+        await expect(fromAddress).toHaveValue('East 2nd Street, 601');
+        const toAddress = await $(page.toField);
+        await toAddress.getValue();
+        await expect(toAddress).toHaveValue('1300 1st St');
     })
 
-      it('should fill in the phone number', async () => {
-        await browser.url(`/`)
-        await page.fillAddresses('East 2nd Street, 601', '1300 1st St');
-        await browser.pause(10000);
-        await page.submitPhoneNumber('+11231231212');
+       it('should fill in the phone number', async () => { 
 
+        await browser.url(`/`) 
+        await page.fillAddresses('East 2nd Street, 601', '1300 1st St'); 
+        await browser.pause(10000); 
+        await page.submitPhoneNumber('+11231231212'); 
+
+        const phoneNumberValue = await $(page.phoneNumberField);
+        const actualPhoneNumber = await phoneNumberValue.getValue();
+        await expect(actualPhoneNumber).toEqual('+11231231212');
+
+    
     })
 
 
@@ -38,20 +52,12 @@ describe('Create an order', () => {
         await paymentMethodButton.waitForDisplayed();
         await paymentMethodButton.click();
 
-        const addCardButton = await $(page.addCardButton);
-        await addCardButton.click();
-        const cardNumberField = await $(page.cardNumberField);
-        await cardNumberField.click();
-        await cardNumberField.setValue('123412341234');
-        const cvcCodeField = await $(page.cvcCodeField);
-        await cvcCodeField.click();
-        await cvcCodeField.setValue('22');
-        const linkButton = await $(page.linkButton);
-        await linkButton.click();
-        const paymentMethod = await $(page.paymentMethod);
-        await expect(paymentMethod).toHaveTextContaining('Card');
-        const closeButton = await $(page.closeButton);
-        await closeButton.click();
+        const cardNumber = helper.getCardNumber();
+        const cvcCode = helper.getCVCCode();
+        await page.fillCardNumber(cardNumber, cvcCode);
+        //the expect line now is the last line in this test
+        const paymentMethod = await $(page.paymentMethod)
+        await expect(paymentMethod).toHaveText('Card');
 
     })
   
@@ -60,9 +66,7 @@ describe('Create an order', () => {
         await page.fillAddresses('East 2nd Street, 601', '1300 1st St');
         await browser.pause(10000);
 
-        const messageToDriverField = await $(page.messageToDriverField);
-        await messageToDriverField.setValue('Hope you love Beyonce');
-        await browser.pause(10000);
+        await page.fillMessageForDriver('Hope you love Beyonce')
         const message = await $(page.messageToDriverField);
         await message.getValue();
         await expect(message).toHaveValue('Hope you love Beyonce');
@@ -124,21 +128,7 @@ describe('Create an order', () => {
         await paymentMethodButton.waitForDisplayed();
         await paymentMethodButton.click();
 
-        const addCardButton = await $(page.addCardButton);
-        await addCardButton.click();
-        const cardNumberField = await $(page.cardNumberField);
-        await cardNumberField.click();
-        await cardNumberField.setValue('123412341234');
-        const cvcCodeField = await $(page.cvcCodeField);
-        await cvcCodeField.click();
-        await cvcCodeField.setValue('22');
-        const linkButton = await $(page.linkButton);
-        await linkButton.click();
-        const paymentMethod = await $(page.paymentMethod);
-        await expect(paymentMethod).toHaveTextContaining('Card');
-        const closeButton = await $(page.closeButton);
-        await closeButton.click();
-  
+        await page.fillCardNumber('123412341234', '22');
 
         const orderButton = await $(page.orderButton);
         await orderButton.waitForDisplayed();
@@ -149,6 +139,40 @@ describe('Create an order', () => {
 
 
     })
+
+    it('should change the search modal to drive info', async () => {
+      await browser.url(`/`)
+      await page.fillAddresses('East 2nd Street, 601', '1300 1st St');
+  
+      await page.submitPhoneNumber('+11231231212');
+
+      const paymentMethodButton = await $(page.paymentMethodButton);
+      await paymentMethodButton.scrollIntoView();
+      await paymentMethodButton.waitForDisplayed();
+      await paymentMethodButton.click();
+
+      await page.fillCardNumber('123412341234', '22');
+
+      const supportivePlanButton = await $(page.supportivePlanButton);
+      await supportivePlanButton.waitForClickable();
+      await supportivePlanButton.click();
+
+      //await page.fillMessageForDriver('Hope you love Beyonce');
+
+      const orderButton = await $(page.orderButton);
+      await orderButton.waitForDisplayed();
+      await orderButton.click();
+      const carSearchModal = await $(page.carSearchModal);
+      await carSearchModal.waitForDisplayed();
+      await expect(carSearchModal).toBeExisting();
+      await browser.pause(60000);
+
+      const orderWindow = await $(page.orderWindow);
+      await expect(orderWindow).toBeExisting();
+
+
+
+  })
 
 
 })

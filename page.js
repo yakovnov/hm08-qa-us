@@ -20,11 +20,12 @@ module.exports = {
     addCardButton: 'div=Add card',
     linkButton: 'button=Link',
     closeButton: '.payment-picker .section.active .close-button',
-    paymentMethod: '.pp-selector',
+    paymentMethod: '.pp-value',
     blanketRadioButton: 'span.slider.round',
     icecreamPlusButton: 'div=+',
     icecreamCounter: '.counter-value',
     orderButton: '.workflow .smart-button-wrapper',
+    orderWindow: '.order-number',
     
 
     
@@ -43,6 +44,28 @@ module.exports = {
         await callATaxiButton.waitForDisplayed();
         await callATaxiButton.click();
     },
+
+    fillCardNumber: async function(number, cvc) {
+        const addCardButton = await $(this.addCardButton);
+        await addCardButton.click();
+        const cardNumberField = await $(this.cardNumberField);
+        await cardNumberField.click();
+        await cardNumberField.setValue(number);
+        const cvcCodeField = await $(this.cvcCodeField);
+        await cvcCodeField.click();
+        await cvcCodeField.setValue(cvc);
+        const linkButton = await $(this.linkButton);
+        await linkButton.click();
+        const closeButton = await $(this.closeButton);
+        await closeButton.click();
+    },
+
+    fillMessageForDriver: async function(message) {
+        const messageToDriverField = await $(this.messageToDriverField);
+        await messageToDriverField.setValue(message);
+        await browser.pause(10000);
+    },
+
     fillPhoneNumber: async function(phoneNumber) {
         const phoneNumberButton = await $(this.phoneNumberButton);
         await phoneNumberButton.waitForDisplayed();
